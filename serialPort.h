@@ -8,4 +8,5 @@ class SerialPort
     public:
        SerialPort(const std::string &portName) : _portName(portName){}
        bool Open();
+       virtual ~SerialPort();
 };

@@ -67,3 +67,11 @@ bool SerialPort::Open()
 
 	return true;
 }
+
+SerialPort::~SerialPort()
+{
+	if(_handle != nullptr)
+	{
+		CloseHandle(_handle);
+	}
+}
