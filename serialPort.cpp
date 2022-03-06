@@ -21,20 +21,20 @@ bool SerialPort::Open()
 	const TCHAR *pcCommPort = _portName.c_str();
 
 	//  Open a handle to the specified com port.
-	const HANDLE hCom = CreateFile( pcCommPort,
-						GENERIC_READ | GENERIC_WRITE,
-						0,      //  must be opened with exclusive-access
-						NULL,   //  default security attributes
-						OPEN_EXISTING, //  must use OPEN_EXISTING
-						0,      //  not overlapped I/O
-						NULL ); //  hTemplate must be NULL for comm devices
-	if (hCom == INVALID_HANDLE_VALUE){ return false;}
+	_handle = CreateFile(pcCommPort,
+					  GENERIC_READ | GENERIC_WRITE,
+					  0,			 //  must be opened with exclusive-access
+					  NULL,			 //  default security attributes
+					  OPEN_EXISTING, //  must use OPEN_EXISTING
+					  0,			 //  not overlapped I/O
+					  NULL);		 //  hTemplate must be NULL for comm devices
+	if (_handle == INVALID_HANDLE_VALUE){ return false;}
 
-	   if (hCom == INVALID_HANDLE_VALUE) 
-   {
-       //  Handle the error.
-       printf ("CreateFile failed with error %d.\n", GetLastError());
-       return false;
+	if (_handle == INVALID_HANDLE_VALUE)
+	{
+		//  Handle the error.
+		printf("CreateFile failed with error %d.\n", GetLastError());
+		return false;
    }
 
 	DCB dcb;
@@ -44,7 +44,7 @@ bool SerialPort::Open()
 
    //  Build on the current configuration by first retrieving all current
    //  settings.
-   if (!GetCommState(hCom, &dcb)) 
+   if (!GetCommState(_handle, &dcb)) 
    {
       //  Handle the error.
       printf ("GetCommState failed with error %d.\n", GetLastError());
@@ -59,7 +59,7 @@ bool SerialPort::Open()
    dcb.ByteSize = 8;             //  data size, xmit and rcv
    dcb.Parity   = NOPARITY;      //  parity bit
    dcb.StopBits = ONESTOPBIT;    //  stop bit
-   if (!SetCommState(hCom, &dcb))
+   if (!SetCommState(_handle, &dcb))
    {
       //  Handle the error.
       printf ("SetCommState failed with error %d.\n", GetLastError());
