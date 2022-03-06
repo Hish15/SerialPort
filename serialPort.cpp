@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
+#include <iostream>
 
 void PrintCommState(DCB dcb)
 {
@@ -74,4 +75,26 @@ void SerialPort::Close()
 	{
 		CloseHandle(_handle);
 	}
+}
+
+void SerialPort::ScanPorts()
+{
+    char lpTargetPath[5000]; // buffer to store the path of the COMPORTS
+
+    for (int i = 0; i < 255; i++) // checking ports from COM0 to COM255
+    {
+        const std::string str = "COM" + std::to_string(i); // converting to COM0, COM1, COM2
+        const DWORD status = QueryDosDevice(str.c_str(), lpTargetPath, 5000);
+
+        // Test the return value and error if any
+        if (status != 0) //QueryDosDevice returns zero if it didn't find an object
+        {
+            std::cout << str << ": " << lpTargetPath << std::endl;
+        }
+
+        if (::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+        {
+        }
+    }
+
 }
