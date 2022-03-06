@@ -69,6 +69,17 @@ bool SerialPort::Open()
 	return true;
 }
 
+bool SerialPort::Write(const std::string& str) const
+{
+	DWORD bytesWritten;
+	const bool status = WriteFile(
+		_handle,
+		str.c_str(),
+		static_cast<DWORD>(str.size()),
+		&bytesWritten, NULL);
+	return status;
+}
+
 void SerialPort::Close()
 {
 	if(_handle != nullptr)

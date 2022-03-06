@@ -9,6 +9,7 @@ class SerialPort
        SerialPort(const std::string &portName) : _portName(portName){}
        bool Open();
        void Close();
+       bool Write(const std::string& stringToWrite) const;
        virtual ~SerialPort() {Close();};
 
     public:
