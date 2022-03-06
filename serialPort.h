@@ -1,8 +1,11 @@
 #include <string>
+#include <windows.h>
 
 class SerialPort
 {
+    const std::string _portName;
+    HANDLE _handle;
     public:
-bool Open(const std::string& portName);
-    
+       SerialPort(const std::string &portName) : _portName(portName){}
+       bool Open();
 };
