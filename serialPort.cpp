@@ -77,6 +77,10 @@ bool SerialPort::Write(const std::string& str) const
 		str.c_str(),
 		static_cast<DWORD>(str.size()),
 		&bytesWritten, NULL);
+	if(!status)
+	{
+		printf("SetCommState failed with error %d.\n", GetLastError());
+	}
 	return status;
 }
 
