@@ -15,9 +15,9 @@ void PrintCommState(DCB dcb)
 }
 
 
-bool SerialPort::Open()
+bool SerialPort::Open(const std::string& portName)
 {
-	TCHAR *pcCommPort = TEXT("COM1"); //  Most systems have a COM1 port
+	const TCHAR *pcCommPort = portName.c_str();
 
 	//  Open a handle to the specified com port.
 	const HANDLE hCom = CreateFile( pcCommPort,

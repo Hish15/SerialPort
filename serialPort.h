@@ -1,5 +1,8 @@
+#include <string>
+
 class SerialPort
 {
     public:
-    bool Open();
+bool Open(const std::string& portName);
+    
 };
