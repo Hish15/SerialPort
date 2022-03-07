@@ -1,6 +1,6 @@
 #include <string>
 #include <windows.h>
-
+#include <span>
 class SerialPort
 {
     const std::string _portName;
@@ -9,8 +9,8 @@ class SerialPort
        SerialPort(const std::string &portName) : _portName(portName){}
        bool Open();
        void Close();
-       bool Write(const std::string& stringToWrite) const;
-       bool Read(std::string& str) const;
+       bool Write(std::span<const char> buf) const;
+       bool Read(std::span<char> str) const;
        virtual ~SerialPort() {Close();};
 
     public:

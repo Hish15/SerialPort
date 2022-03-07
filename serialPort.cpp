@@ -70,7 +70,7 @@ bool SerialPort::Open()
 	return true;
 }
 
-bool SerialPort::Read(std::string& str) const
+bool SerialPort::Read(std::span<char> str) const
 {
     std::array<uint8_t, 512> buffer;
     DWORD nRead;
@@ -87,12 +87,12 @@ bool SerialPort::Read(std::string& str) const
 	}
 	return status;
 }
-bool SerialPort::Write(const std::string& str) const
+bool SerialPort::Write(std::span<const char> str) const
 {
 	DWORD bytesWritten;
 	const bool status = WriteFile(
 		_handle,
-		str.c_str(),
+		str.data(),
 		static_cast<DWORD>(str.size()),
 		&bytesWritten, NULL);
 	if(!status)
