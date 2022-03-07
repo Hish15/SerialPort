@@ -87,6 +87,10 @@ bool SerialPort::Read(std::span<char> str) const
 	}
 	return status;
 }
+void SerialPort::LoopRead(std::function<int(std::span<char>)> callback)
+{
+
+}
 bool SerialPort::Write(std::span<const char> str) const
 {
 	DWORD bytesWritten;

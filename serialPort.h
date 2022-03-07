@@ -1,5 +1,6 @@
 #include <string>
 #include <windows.h>
+#include <functional>
 #include <span>
 class SerialPort
 {
@@ -13,6 +14,7 @@ class SerialPort
        bool Read(std::span<char> str) const;
        virtual ~SerialPort() {Close();};
 
+       void LoopRead(std::function<int(std::span<char>)> callback);
     public:
         static void ScanPorts();
 };
