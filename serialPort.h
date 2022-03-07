@@ -10,6 +10,7 @@ class SerialPort
        bool Open();
        void Close();
        bool Write(const std::string& stringToWrite) const;
+       bool Read(std::string& str) const;
        virtual ~SerialPort() {Close();};
 
     public:

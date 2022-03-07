@@ -1,5 +1,6 @@
 #include "serialPort.h"
 
+#include <array>
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -69,6 +70,23 @@ bool SerialPort::Open()
 	return true;
 }
 
+bool SerialPort::Read(std::string& str) const
+{
+    std::array<uint8_t, 512> buffer;
+    DWORD nRead;
+    const bool status = ReadFile(
+            _handle,
+            buffer.data(),
+            static_cast<DWORD>(buffer.size()),
+            &nRead,
+            NULL);
+
+	if(!status)
+	{
+		printf("SetCommState failed with error %d.\n", GetLastError());
+	}
+	return status;
+}
 bool SerialPort::Write(const std::string& str) const
 {
 	DWORD bytesWritten;
