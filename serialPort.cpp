@@ -128,10 +128,5 @@ void SerialPort::ScanPorts()
         {
             std::cout << str << ": " << lpTargetPath << std::endl;
         }
-
-        if (::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-        {
-        }
     }
-
 }
