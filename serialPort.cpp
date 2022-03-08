@@ -1,6 +1,7 @@
 #include "serialPort.h"
 
 #include <array>
+#include <chrono>
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -99,9 +100,23 @@ const std::vector<uint8_t> SerialPort::Read() const
     }
     return buffer;
 }
-void SerialPort::LoopRead(std::function<int(std::span<char>)> callback)
+void SerialPort::LoopRead(std::function<void(std::vector<uint8_t>)>& callback)
 {
+    auto readFunction = [&callback, this]()
+    {
+        while(true)
+        {
+            const std::vector<uint8_t> readbytes = Read();
+            if(readbytes.size() > 0)
+            {
+                callback(readbytes); 
+            }
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(1ms);
+        }
+    };
 
+    readThread = std::jthread(readFunction);
 }
 bool SerialPort::Write(std::span<const char> str) const
 {
@@ -123,6 +138,7 @@ void SerialPort::Close()
     if(_handle != nullptr)
     {
         CloseHandle(_handle);
+        _handle = nullptr;
     }
 }
 
