@@ -19,26 +19,26 @@ void PrintCommState(DCB dcb)
 
 bool SerialPort::Open()
 {
-	const TCHAR *pcCommPort = _portName.c_str();
+    const TCHAR *pcCommPort = _portName.c_str();
 
-	//  Open a handle to the specified com port.
-	_handle = CreateFile(pcCommPort,
-					  GENERIC_READ | GENERIC_WRITE,
-					  0,			 //  must be opened with exclusive-access
-					  NULL,			 //  default security attributes
-					  OPEN_EXISTING, //  must use OPEN_EXISTING
-					  0,			 //  not overlapped I/O
-					  NULL);		 //  hTemplate must be NULL for comm devices
-	if (_handle == INVALID_HANDLE_VALUE){ return false;}
+    //  Open a handle to the specified com port.
+    _handle = CreateFile(pcCommPort,
+                      GENERIC_READ | GENERIC_WRITE,
+                      0,             //  must be opened with exclusive-access
+                      NULL,             //  default security attributes
+                      OPEN_EXISTING, //  must use OPEN_EXISTING
+                      0,             //  not overlapped I/O
+                      NULL);         //  hTemplate must be NULL for comm devices
+    if (_handle == INVALID_HANDLE_VALUE){ return false;}
 
-	if (_handle == INVALID_HANDLE_VALUE)
-	{
-		//  Handle the error.
-		printf("CreateFile failed with error %d.\n", GetLastError());
-		return false;
+    if (_handle == INVALID_HANDLE_VALUE)
+    {
+        //  Handle the error.
+        printf("CreateFile failed with error %d.\n", GetLastError());
+        return false;
    }
 
-	DCB dcb;
+    DCB dcb;
    //  Initialize the DCB structure.
    SecureZeroMemory(&dcb, sizeof(DCB));
    dcb.DCBlength = sizeof(DCB);
@@ -49,7 +49,7 @@ bool SerialPort::Open()
    {
       //  Handle the error.
       printf ("GetCommState failed with error %d.\n", GetLastError());
-	  return false;
+      return false;
    }
 
    PrintCommState(dcb);       //  Output to console
@@ -67,7 +67,17 @@ bool SerialPort::Open()
       return false;
    }
 
-	return true;
+    //Setting Timeouts
+    COMMTIMEOUTS timeouts = { 0 };  //Initializing timeouts structure
+    //The maximum time allowed to elapse before the arrival of the next byte on the communications line
+    timeouts.ReadIntervalTimeout = 10;
+    if (SetCommTimeouts(_handle, &timeouts) == FALSE)
+    {
+        printf("Error to Setting Time outs\n");
+        return false;
+    }
+
+    return true;
 }
 
 bool SerialPort::Read(std::span<char> str) const
@@ -81,11 +91,11 @@ bool SerialPort::Read(std::span<char> str) const
             &nRead,
             NULL);
 
-	if(!status)
-	{
-		printf("SetCommState failed with error %d.\n", GetLastError());
-	}
-	return status;
+    if(!status)
+    {
+        printf("SetCommState failed with error %d.\n", GetLastError());
+    }
+    return status;
 }
 void SerialPort::LoopRead(std::function<int(std::span<char>)> callback)
 {
@@ -93,25 +103,25 @@ void SerialPort::LoopRead(std::function<int(std::span<char>)> callback)
 }
 bool SerialPort::Write(std::span<const char> str) const
 {
-	DWORD bytesWritten;
-	const bool status = WriteFile(
-		_handle,
-		str.data(),
-		static_cast<DWORD>(str.size()),
-		&bytesWritten, NULL);
-	if(!status)
-	{
-		printf("SetCommState failed with error %d.\n", GetLastError());
-	}
-	return status;
+    DWORD bytesWritten;
+    const bool status = WriteFile(
+        _handle,
+        str.data(),
+        static_cast<DWORD>(str.size()),
+        &bytesWritten, NULL);
+    if(!status)
+    {
+        printf("SetCommState failed with error %d.\n", GetLastError());
+    }
+    return status;
 }
 
 void SerialPort::Close()
 {
-	if(_handle != nullptr)
-	{
-		CloseHandle(_handle);
-	}
+    if(_handle != nullptr)
+    {
+        CloseHandle(_handle);
+    }
 }
 
 void SerialPort::ScanPorts()
