@@ -80,22 +80,24 @@ bool SerialPort::Open()
     return true;
 }
 
-bool SerialPort::Read(std::span<char> str) const
+const std::vector<uint8_t> SerialPort::Read() const
 {
-    std::array<uint8_t, 512> buffer;
+    auto buffer = std::vector<uint8_t>();
+    buffer.reserve(4096);
     DWORD nRead;
     const bool status = ReadFile(
             _handle,
             buffer.data(),
-            static_cast<DWORD>(buffer.size()),
+            static_cast<DWORD>(buffer.capacity()),
             &nRead,
             NULL);
 
     if(!status)
     {
         printf("SetCommState failed with error %d.\n", GetLastError());
+        return std::vector<uint8_t>();
     }
-    return status;
+    return buffer;
 }
 void SerialPort::LoopRead(std::function<int(std::span<char>)> callback)
 {
