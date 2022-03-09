@@ -71,7 +71,8 @@ bool SerialPort::Open()
     //Setting Timeouts
     COMMTIMEOUTS timeouts = { 0 };  //Initializing timeouts structure
     //The maximum time allowed to elapse before the arrival of the next byte on the communications line
-    timeouts.ReadIntervalTimeout = 10;
+    timeouts.ReadIntervalTimeout = 1;
+    timeouts.ReadTotalTimeoutConstant = 10;
     if (SetCommTimeouts(_handle, &timeouts) == FALSE)
     {
         printf("Error to Setting Time outs\n");
