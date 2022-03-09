@@ -20,7 +20,9 @@ void PrintCommState(DCB dcb)
 
 bool SerialPort::Open()
 {
-    const TCHAR *pcCommPort = _portName.c_str();
+    using namespace std::literals::string_literals;
+    std::string portName =  "COM"s + std::to_string(_portNumber);
+    const TCHAR *pcCommPort = portName.c_str();
 
     //  Open a handle to the specified com port.
     _handle = CreateFile(pcCommPort,
@@ -93,7 +95,10 @@ const std::vector<uint8_t> SerialPort::Read() const
             static_cast<DWORD>(buffer.capacity()),
             &nRead,
             NULL);
-
+    if(nRead > 0)
+    {
+        return buffer;
+    }
     if(!status)
     {
         printf("SetCommState failed with error %d.\n", GetLastError());

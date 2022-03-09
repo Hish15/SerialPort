@@ -6,11 +6,11 @@
 #include <span>
 class SerialPort
 {
-    const std::string _portName;
+    const int _portNumber;
     HANDLE _handle;
     std::jthread readThread;
     public:
-       SerialPort(const std::string &portName) : _portName(portName){}
+       SerialPort(int portNumber) : _portNumber(portNumber){}
        virtual ~SerialPort(){Close();};
 
        bool Open();
